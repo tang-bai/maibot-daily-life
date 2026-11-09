@@ -12,61 +12,9 @@
 
 **默认关闭自动发布，默认好友可见。** 插件不需要单独登录 QQ 空间、不保存 Cookie。绘图和文本模型可能收费；测试均使用模拟接口，未真实生成付费图片或发布说说。
 
-## 0.1.7 适配麦麦插件中心规范
-
-按 [plugin-repo 贡献指南](https://github.com/Mai-with-u/plugin-repo/blob/main/CONTRIBUTING.md) 调整：`plugin_type` 由 `chat` 改为 `automation`（自动化），插件 ID 由 `local.maibot-daily-life` 改为 `github.tang-bai.maibot-daily-life`，并补齐 `urls.repository`、`homepage`、`documentation`、`issues` 四项 GitHub 地址。
-
-由于插件 ID 变化会改变 Host 分配的数据目录，插件启动时会把旧 ID 目录（`local.maibot-daily-life`、`github.username.maibot-daily-life`）中的任务数据库和草稿图片**复制**到新目录（仅在新目录尚无数据库时执行一次，存在多个旧目录时取最新的数据库；不移动、不删除旧目录），因此去重、额度、草稿和发布回执不会丢失，也避免了改名后重复发布。你之后把 `username` 换成真实用户名时同样适用。
-
-清单所有者已替换为真实账号 `tang-bai`，仓库地址为 https://github.com/tang-bai/maibot-daily-life 。
-
-## 0.1.6 管理员手动命令不限冷却和次数
-
-管理员执行 /daily preview、/daily post、/daily retry 时，跳过本插件的生成冷却与每日次数限制，/daily publish 本来就不检查生成次数。自动发布继续按原来的冷却和每日上限运行。所有生成尝试仍记录并参与自动任务的限流统计，手动命令不会因此被拦截；每次手动生成或重试都可能收费。
-
-仅因自动冷却、额度或忙态而跳过、从未生成过的活动，也可以用手动命令立即生成。主开关、管理员白名单、有效活动、单任务并发、已有草稿与已提交/已发布/结果不明任务的防重保护保留。这不会修改第三方 group-loop-guard 的群消息冷却，请在该插件中配置白名单或使用不受其限制的私聊。
-
-## 0.1.5 显式失败重试与发送诊断（历史行为，手动限流已在 0.1.6 取消）
-
-新增 /daily retry 任务ID：只重试当前活动中尚未向 QQ 空间提交、在生成阶段失败的任务。仍使用原来的冷却和每日额度，每次手动重试都新增一次生成尝试；自动任务和重复 /daily post 不会隐式重试。已提交、已发布或结果不明的任务拒绝重试。已有数据库自动补充安全标记，不要删除数据库。
-
-异步命令不再先发“受理”消息，默认只发送最终结果，减少群防循环插件因短时间两次回复而拦截。若发送返回未送达，会另外记录发送诊断，不覆盖真正的绘图错误，也不绕过 Hook 或自动补发。绘图失败显示 HTTP 状态码和固定排查建议，不输出密钥或服务商原始响应正文。
-
-## 0.1.4 密钥仅使用插件配置
-
-绘图密钥改为 image.api_key，直接在 WebUI 的“绘图接口密钥”或插件配置中填写，不再读取任何密钥环境变量。输入框使用密码类型显示，错误提示、日志和任务数据库不包含密钥。**密码框只遮挡显示，配置文件中的密钥并未加密**，请保护配置文件及备份。
-
-升级后保留其他配置，在新的密钥字段重新填写新密钥并保存；旧 api_key_env 字段会被忽略，不会将曾误填的密钥自动迁移。通常保存后由 MaiBot 配置热重载生效；若未生效，重新加载插件即可，不需要设置环境变量或重启整个 MaiBot。
-
-## 0.1.3 一键生成并发布
-
-新增管理员命令 /daily post：为当前活动生成草稿，然后直接将图片和配文发布到 QQ 空间，无需再次输入草稿 ID。即使关闭自动发布也可手动执行；仍遵守主开关、管理员权限、冷却、每日额度、活动有效期和去重保护。原有预览与发布草稿命令保持不变。
-
-## 0.1.2 配置页汉化
-
-WebUI 的七个分组标题、全部字段标签和辅助说明均使用中文；底层配置键、默认值和已保存配置保持不变。升级插件后重新加载插件并刷新配置页即可，无需重填原有配置。
-
-## 0.1.1 安装修复
-
-补齐 MaiBot 严格清单校验要求的 author.url、urls.repository，并在打包阶段增加必填字段检查。请使用 0.1.1 或更高版本 ZIP，旧 0.1.0 安装包缺少这些字段。
-
-该版本曾使用 example.invalid 保留域名占位；0.1.7 已改为 GitHub 形式地址，自 0.1.7 起改为真实 GitHub 仓库地址。占位链接不参与运行、绘图或 QQ 发布。
-
-## 提交到麦麦插件中心
-
-本仓库已按 [CONTRIBUTING.md](https://github.com/Mai-with-u/plugin-repo/blob/main/CONTRIBUTING.md) 组织，提交前请完成：
-
-1. 创建**公开** GitHub 仓库，把本项目内容放在仓库根目录（根目录需包含 `_manifest.json`、`plugin.py`、`LICENSE`、`README.md`，且不得包含 `config.toml`）。
-2. 确认 [_manifest.json](_manifest.json) 的 `id`、`author.url` 与 `repository`/`homepage`/`documentation`/`issues` 同当前仓库一致（已指向 [tang-bai/maibot-daily-life](https://github.com/tang-bai/maibot-daily-life)）。
-3. 保持 `id` 与申请时一致；`version`、`host_application` 使用三段式版本号，主版本和次版本不得为 `99`/`999`。
-4. **先发布至少一个 GitHub Release**（支持预发布，使用自动生成的源码包即可；草稿和仅 Tag 不满足要求），Release 的 manifest `version` 必须与提交一致。
-5. 在 plugin-repo 提交 “Add Plugin / 添加插件” Issue，填写插件 ID 与公开仓库地址，等待 CI 校验与维护者批准。
-
-本地可用 `python scripts/build_release.py` 预检清单字段与 GitHub 地址；若仍是占位所有者会打印警告。
-
 ## 环境要求
 
-| 组件 | 首版要求 |
+| 组件 | 要求 |
 | --- | --- |
 | Python | 3.11+；本地验证使用 3.12.14，3.11 做语法兼容检查 |
 | MaiBot | 1.3.19–1.3.99 |
@@ -84,7 +32,7 @@ MaiBot 1.4 尚未验证，也未声明支持：调研时上游 SnowLuma 适配�
 
 将发行 ZIP 上传到 MaiBot WebUI 的插件 ZIP 安装入口。安装包根目录直接包含 [plugin.py](plugin.py)、[_manifest.json](_manifest.json) 和 daily_life 模块目录，不包含开发虚拟环境或密钥。
 
-插件 ID：**github.tang-bai.maibot-daily-life**（0.1.7 起由 local.maibot-daily-life 更名）。启用前必须先安装并配置 [MaiWeave](https://github.com/ilworkcn/MaiWeave)，同时准备已连接 SnowLuma 客户端的适配器。
+插件 ID：**github.tang-bai.maibot-daily-life**。启用前必须先安装并配置 [MaiWeave](https://github.com/ilworkcn/MaiWeave)，同时准备已连接 SnowLuma 客户端的适配器。
 
 ### 手动安装
 
@@ -117,7 +65,7 @@ model = "服务商支持的绘图模型"
 size = "1024x1024"
 ~~~
 
-Windows、Linux、系统服务和容器均使用同一配置方式。无需环境变量或 .env 文件，也不会从它们读取密钥。API Key 是绘图服务密钥，不是 QQ Token。
+Windows、Linux、系统服务和容器均使用同一配置方式。无需环境变量或 .env 文件，也不会从它们读取密钥。API Key 是绘图服务密钥，不是 QQ Token。**密码框只遮挡显示，配置文件中的密钥并未加密**，请保护配置文件及备份。
 
 ## 管理员命令
 
@@ -138,7 +86,7 @@ Windows、Linux、系统服务和容器均使用同一配置方式。无需环�
 ## 绘图失败和群回复被拦截的排查
 
 1. 先私聊发送 /daily status，查看任务ID、保存的错误、当前额度和发送诊断。群里出现 group-loop-guard、duplicate_outgoing 或 cooldown 说明聊天回复被第三方 Hook 拦截，不是绘图 API 的失败原因。
-2. 绘图 HTTP 400/422：检查模型、尺寸和 images/generations 协议；401：检查密钥；403：检查权限；404：检查接口地址和模型；429：检查频率、额度和余额；5xx：检查服务商状态。超时、证书和网络连接失败也会分别提示。仅有通用旧日志时无法判断服务商实际原因，需查看新错误或服务商请求记录。
+2. 绘图 HTTP 400/422：检查模型、尺寸和 images/generations 协议；401：检查密钥；403：检查权限；404：检查接口地址和模型；429：检查频率、额度和余额；5xx：检查服务商状态。超时、证书和网络连接失败也会分别提示。
 3. 修正接口配置后，用 /daily retry 任务ID 显式重试。已经发布、正在提交、结果不明、曾经提交失败或不属于当前活动的任务不会重试；已有草稿应使用 /daily publish 草稿ID。
 4. 插件的“自动生成冷却时间”默认 **7200 秒**，与群防循环的 **120 秒** 是两套独立限制。管理员手动命令已跳过本插件冷却和每日次数限制，无需调小配置即可立即手动重试；自动任务仍限流。每次尝试可能收费，不要删除去重数据或反复盲试。
 5. 第三方群防循环仍可拦截短时间重复命令的结果，插件不会绕过它。请等待对应冷却，或在未受该群规则限制的私聊里查看；如私聊也拦截，按防循环插件文档配置管理员/指定会话的例外。
@@ -198,9 +146,9 @@ params={content: 配文, images: ["base64://..."], ugc_right: 4}
 
 ## 数据、隐私与维护
 
-运行数据使用 Host 分配的 data_dir，通常对应 data/plugins/github.tang-bai.maibot-daily-life/：SQLite 保存任务、配文、状态摘要、额度、去重键与 tid；图片缓存在其 images 子目录。该任务数据库不保存 API Key、Cookie 或完整 base64；API Key 仅保存在插件配置中，勿分享真实配置或未脱敏备份。
+运行数据使用 Host 分配的 data_dir，通常对应 `data/plugins/github.tang-bai.maibot-daily-life/`：SQLite 保存任务、配文、状态摘要、额度、去重键与 tid；图片缓存在其 images 子目录。该任务数据库不保存 API Key、Cookie 或完整 base64；API Key 仅保存在插件配置中，勿分享真实配置或未脱敏备份。
 
-插件 ID 从 `local.maibot-daily-life` 改名后，新数据目录为 `data/plugins/github.tang-bai.maibot-daily-life/`。首次启动会自动复制旧目录的任务数据库与草稿图片（新目录已有数据库时跳过，多个旧目录取最新），旧目录保留可自行清理；以后再次改名同样会迁移。
+如果此前使用过其他插件 ID，首次启动会把旧目录的任务数据库与草稿图片复制到当前目录（当前目录已有数据库时跳过，多个旧目录取最新），不会移动或删除旧目录，因此去重、额度与草稿不会丢失。
 
 完成图片默认保留 7 天，完成任务明细默认保留 90 天；活跃/有效草稿/结果不明任务的图片不会被清理，uncertain 记录、轻量去重键及额度账本保留以防重复。请自行监控长期数据目录大小。升级和备份保留数据目录；**不要运行中删除数据库来“重置额度”**。
 
