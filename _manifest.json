@@ -1,0 +1,57 @@
+{
+  "manifest_version": 2,
+  "plugin_type": "automation",
+  "id": "github.tang-bai.maibot-daily-life",
+  "name": "麦麦日常图文空间",
+  "version": "0.1.7",
+  "description": "读取 MaiWeave 当前活动，通过 OpenAI 兼容接口生成配文与插画，并使用 SnowLuma 发布到 QQ 空间。依赖 MaiWeave；默认关闭自动发布。",
+  "author": {
+    "name": "MaiBot Daily Life Contributors",
+    "url": "https://github.com/tang-bai"
+  },
+  "license": "MIT",
+  "urls": {
+    "repository": "https://github.com/tang-bai/maibot-daily-life",
+    "homepage": "https://github.com/tang-bai/maibot-daily-life",
+    "documentation": "https://github.com/tang-bai/maibot-daily-life/blob/main/README.md",
+    "issues": "https://github.com/tang-bai/maibot-daily-life/issues"
+  },
+  "host_application": {
+    "min_version": "1.3.19",
+    "max_version": "1.3.99"
+  },
+  "sdk": {
+    "min_version": "2.21.0",
+    "max_version": "2.21.99"
+  },
+  "dependencies": [
+    {
+      "type": "python_package",
+      "name": "aiohttp",
+      "version_spec": ">=3.10,<4"
+    },
+    {
+      "type": "python_package",
+      "name": "Pillow",
+      "version_spec": ">=10,<14"
+    },
+    {
+      "type": "python_package",
+      "name": "tzdata",
+      "version_spec": ">=2025.2"
+    }
+  ],
+  "capabilities": [
+    "api.call",
+    "api.get",
+    "llm.generate",
+    "send.text",
+    "send.image"
+  ],
+  "i18n": {
+    "default_locale": "zh-CN",
+    "supported_locales": [
+      "zh-CN"
+    ]
+  }
+}

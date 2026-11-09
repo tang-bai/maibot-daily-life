@@ -1,0 +1,10 @@
+[project]
+name = "maibot-daily-life"
+version = "0.1.7"
+description = "Illustrated MaiWeave activities published to QZone through SnowLuma"
+requires-python = ">=3.11"
+dependencies = ["maibot-plugin-sdk==2.21.0", "aiohttp>=3.10,<4", "Pillow>=10,<14", "tzdata>=2025.2"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"

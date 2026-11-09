@@ -1,0 +1,42 @@
+# 示例仅含非敏感配置；优先在 MaiBot WebUI 配置页填写。
+# 用前请修改管理员QQ、角色外貌、绘图地址、模型和接口密钥；勿分享已填写密钥的配置。
+[plugin]
+config_version = "1.0.0"
+enabled = true
+admin_qqs = [] # 填自己的 QQ，如 ["12345678"]
+
+[character]
+appearance = "" # 必填：例如成年角色、黑色短发、棕色眼睛、浅色休闲服；按自己人设填写
+art_style = "温暖的日常插画，自然光线，画面中不出现文字"
+voice = "自然、轻松，像给朋友分享自己的小日常；不要提及系统或状态数值"
+
+[text]
+task_name = "utils"
+model_name = ""
+timeout_seconds = 90
+
+[image]
+base_url = "" # 如 https://你的服务地址/v1，不能包含 /images/generations
+api_key = "" # 直接填写第三方绘图接口密钥，不需要环境变量；请勿提交真实密钥
+model = "" # 服务商实际支持的图片生成模型；不是文本模型
+size = "1024x1024" # 服务不支持该字段时改为 ""
+timeout_seconds = 180
+max_image_bytes = 8388608
+max_pixels = 16777216
+
+[trigger]
+auto_enabled = false # 预览验证完成后，显式改为 true 才开始自动发布
+poll_seconds = 60
+stable_seconds = 120
+cooldown_seconds = 7200 # 仅自动任务检查；管理员手动命令不限冷却
+daily_limit = 3 # 仅自动任务检查；所有尝试留痕，管理员手动命令不限次数
+timezone = "Asia/Shanghai"
+
+[publish]
+visibility = 4 # 1 公开、4 好友可见、64 仅自己
+timeout_seconds = 180
+draft_ttl_seconds = 900
+
+[storage]
+image_retention_days = 7
+log_retention_days = 90

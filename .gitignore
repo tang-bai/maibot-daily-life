@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.py[cod]
+config.toml
+.env
+*.sqlite3*
+.coverage
+dist/
